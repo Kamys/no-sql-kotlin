@@ -1,20 +1,20 @@
 package com.example.nosqlkotlin
 
+import io.mongock.runner.springboot.EnableMongock
 import org.bson.types.ObjectId
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
+@EnableMongock
 @SpringBootApplication
 class Application
 
 fun main(args: Array<String>) {
     val context = runApplication<Application>(*args)
-    //initData(context)
+    //initData(context) SpringDataMongoV3Driver
 
 }
 
@@ -51,26 +51,34 @@ class Controller(
     val userRepository: UsersRepository
 ) {
 
-    @GetMapping("/{project-name}")
-    fun index(@PathVariable("project-name") projectName: String): Any {
-        val project = projectsRepository.findByName(projectName)
+    class ResponseRequest(
+        val userId: ObjectId
+    )
+
+    @PostMapping("project/{projectId}/job/{jobID}")
+    fun sendResponse(projectId: ObjectId, jobId: ObjectId, @RequestBody responseRequest: ResponseRequest): String {
+        val project = projectsRepository.findById(projectId)
 
         if (project == null) {
-            return "Not found $projectName"
+            return "Not found project $projectId"
         }
 
-        return project.jobs
-    }
+        val job = project.jobs.find { it.id == jobId }
 
-    @GetMapping("/{project-name}/job-responses-cccepted")
-    fun getAllResponsesAccepted(@PathVariable("project-name") projectName: String): Any {
-        val project = projectsRepository.findByName(projectName)
-
-        if (project == null) {
-            return "Not found $projectName"
+        if (job == null) {
+            return "Not found job $jobId"
         }
 
-        return project.jobs
-    }
+        val user = userRepository.findById(responseRequest.userId)
 
+        if (user == null) {
+            return "Not found user ${responseRequest.userId}"
+        }
+
+        job.responses = job.responses + Response(user = user, status = ResponseStatus.REQUEST)
+
+        projectsRepository.save(project)
+
+        return "Success!"
+    }
 }

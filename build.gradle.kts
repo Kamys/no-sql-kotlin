@@ -15,7 +15,16 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("io.mongock:mongock-bom:5.2.2")
+    }
+}
+
 dependencies {
+    implementation("io.mongock:mongock-springboot-v3")
+    implementation("io.mongock:mongodb-springdata-v4-driver")
+
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

@@ -1,22 +1,27 @@
 package com.example.nosqlkotlin
 
+import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface ProjectRepository : MongoRepository<Project, String> {
-    fun findByName(primaryKey: String): Project?
+    fun findById(id: ObjectId): Project?
 }
 
 @Document("project")
 class Project(
+    @Id
+    val id: ObjectId = ObjectId.get(),
     val name: String,
     val jobs: List<Job>
 )
 
 class Job(
+    val id: ObjectId = ObjectId.get(),
     val name: String,
-    val responses: List<Response>,
+    var responses: List<Response>,
 )
 
 class Response(

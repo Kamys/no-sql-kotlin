@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 @Document("user")
 class User(
     @Id
-    val id: ObjectId,
+    val id: ObjectId = ObjectId.get(),
     val name: String?,
     val email: String?,
 ) {
@@ -17,4 +17,5 @@ class User(
 
 interface UsersRepository : MongoRepository<User, String> {
     fun findByName(primaryKey: String): User?
+    fun findById(id: ObjectId): User?
 }
