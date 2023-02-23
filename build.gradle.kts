@@ -24,12 +24,15 @@ dependencyManagement {
 dependencies {
     implementation("io.mongock:mongock-springboot-v3")
     implementation("io.mongock:mongodb-springdata-v4-driver")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
 
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("com.ninja-squad:springmockk:4.0.0")
 }
 
 tasks.withType<KotlinCompile> {

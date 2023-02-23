@@ -19,13 +19,15 @@ class MyMigrationChangeUnit(
     @Execution
     fun migrationMethod() {
         val user = User(name = "Alex", email = "alex@mail.com")
-        val responses = listOf(Response(user = user, status = ResponseStatus.REQUEST))
+        val job = Job(name = "Кузнец")
+        job.addResponse(Response(user = user, status = ResponseStatus.REQUEST))
         val project = Project(
             name = "Project 1", jobs = listOf(
-                Job("Кузнец", responses = responses)
+                job
             )
         )
         mongoTemplate.save(project)
+        mongoTemplate.save(user)
     }
 
     @RollbackExecution

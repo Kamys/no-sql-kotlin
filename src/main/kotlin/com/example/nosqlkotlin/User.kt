@@ -9,13 +9,13 @@ import org.springframework.data.mongodb.repository.MongoRepository
 class User(
     @Id
     val id: ObjectId = ObjectId.get(),
-    val name: String?,
-    val email: String?,
+    val name: String,
+    val email: String? = null,
 ) {
 
 }
 
-interface UsersRepository : MongoRepository<User, String> {
+interface UserRepository : MongoRepository<User, String> {
     fun findByName(primaryKey: String): User?
     fun findById(id: ObjectId): User?
 }
