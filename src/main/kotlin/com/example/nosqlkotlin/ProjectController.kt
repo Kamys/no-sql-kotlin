@@ -31,7 +31,7 @@ class ProjectController(
             throw NotFoundException("Not found job $jobId")
         }
 
-        val user = userRepository.findById(ObjectId(responseRequest.userId))
+        val user = userRepository.findById(responseRequest.userId)
 
         if (user == null) {
             throw NotFoundException("Not found user ${responseRequest.userId}")

@@ -60,6 +60,6 @@ fun initData(context: ConfigurableApplicationContext) {
 }
 
 class ResponseRequest(
-    val userId: String
+    val userId: ObjectId
 )
 

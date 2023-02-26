@@ -6,15 +6,19 @@ import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 
 @ExtendWith(SpringExtension::class)
-@WebMvcTest(ProjectController::class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @TestPropertySource(properties = ["mongock.enabled=false"])
+@ComponentScan("com.example.nosqlkotlin")
 open class BaseTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -31,11 +35,11 @@ open class BaseTest {
     @BeforeEach
     fun setUp() {}
 
-    inline fun <reified T> MvcResult.asObject(): T {
+    final inline fun <reified T> MvcResult.asObject(): T {
         return this.response.contentAsString.asObject()
     }
 
-    inline fun <reified T> String.asObject(): T {
+    final inline fun <reified T> String.asObject(): T {
         return objectMapper.readValue(this)
     }
 }
