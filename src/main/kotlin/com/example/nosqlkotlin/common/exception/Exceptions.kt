@@ -1,4 +1,4 @@
-package com.example.nosqlkotlin.exception
+package com.example.nosqlkotlin.common.exception
 
 open class BaseException : RuntimeException {
     final override val message: String

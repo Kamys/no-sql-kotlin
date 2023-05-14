@@ -1,19 +1,42 @@
 package com.example.nosqlkotlin
 
-import com.example.nosqlkotlin.exception.NotFoundException
+import com.example.nosqlkotlin.common.exception.NotFoundException
 import org.bson.types.ObjectId
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/projects")
 class ProjectController(
     val projectRepository: ProjectRepository,
     val userRepository: UserRepository
 ) {
+    @GetMapping
+    fun getProjects(
+        @RequestBody filter: ProjectFilter
+    ): ProjectResponse {
+        val paging = PageRequest.of(filter.page, filter.limit)
+        val page = projectRepository.smartSearch(filter.searchTerm, paging)
 
-    @PostMapping("project/{projectId}/job/{jobId}/responses")
+        return ProjectResponse(
+            projects = page.content,
+            currentPage = page.number,
+            totalPages = page.totalPages,
+            totalSize = page.totalElements,
+        )
+    }
+
+    private fun ProjectRepository.smartSearch(name: String?, pageable: Pageable): Page<Project> {
+        if (name.isNullOrEmpty()) {
+            return findAll(pageable)
+        }
+
+        return findByNameContainingIgnoreCase(name, pageable)
+    }
+
+    @PostMapping("/{projectId}/job/{jobId}/responses")
     fun sendResponse(
         @PathVariable projectId: ObjectId,
         @PathVariable jobId: ObjectId,

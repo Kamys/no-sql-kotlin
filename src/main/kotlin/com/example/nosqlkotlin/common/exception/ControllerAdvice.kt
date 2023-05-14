@@ -1,4 +1,4 @@
-package com.example.nosqlkotlin.exception
+package com.example.nosqlkotlin.common.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler

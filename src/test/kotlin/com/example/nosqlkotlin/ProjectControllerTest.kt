@@ -1,16 +1,24 @@
 package com.example.nosqlkotlin
 
-import io.mockk.every
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-
-class ProjectControllerTest: BaseTest() {
+class ProjectControllerTest(
+    @Autowired
+    private val mongoTemplate: MongoTemplate,
+    @Autowired
+    private val projectRepository: ProjectRepository,
+) : BaseTest() {
 
     @Test
-    fun `sendResponse should add response to the job and return the updated project`() {
+    fun `should add response in job and return updated project`() {
         // Arrange
         val projectId = ObjectId.get()
         val jobId = ObjectId.get()
@@ -22,21 +30,26 @@ class ProjectControllerTest: BaseTest() {
             jobs = listOf(Job(id = jobId, name = "Test job", responses = mutableListOf()))
         )
 
-        every { projectRepository.findById(projectId) } returns project
-        every { userRepository.findById(any<ObjectId>()) } returns user
-        every { projectRepository.save(project) } returns project
+        mongoTemplate.save(project)
+        mongoTemplate.save(user)
 
         // Act
-        val result = mockMvc.post("/project/$projectId/job/$jobId/responses") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(responseRequest)
-        }.andReturn()
+        val view: Project = postJson(
+            url = "/project/$projectId/job/$jobId/responses",
+            body = responseRequest
+        )
 
         // Assert
-        val updatedProject = result.asObject<Project>()
-        assert(updatedProject.jobs[0].responses.size == 1)
-        assert(updatedProject.jobs[0].responses[0].user.id.toString() == user.id.toString())
-        assert(updatedProject.jobs[0].responses[0].status == ResponseStatus.REQUEST)
+        view.jobs.ensureFirst().responses.ensureFirst().also {
+            it.user.id.shouldBe(user.id)
+            it.status.shouldBe(ResponseStatus.REQUEST)
+        }
+
+        val updateProject = projectRepository.findById(project.id).shouldNotBeNull()
+        updateProject.jobs.ensureFirst().responses.ensureFirst().also {
+            it.user.id.shouldBe(user.id)
+            it.status.shouldBe(ResponseStatus.REQUEST)
+        }
     }
 }
 

@@ -1,14 +1,17 @@
 package com.example.nosqlkotlin
-
-import com.example.nosqlkotlin.exception.ConflictException
+import com.example.nosqlkotlin.common.exception.ConflictException
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface ProjectRepository : MongoRepository<Project, String> {
     fun findById(id: ObjectId): Project?
+    override fun findAll(pageable: Pageable): Page<Project>
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Project>
 }
 
 @Document("project")
