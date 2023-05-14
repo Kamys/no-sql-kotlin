@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
@@ -29,12 +33,19 @@ class BaseTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
+    @Autowired
+    lateinit var mongoTemplate: MongoTemplate
+
     @BeforeEach
-    fun setUp() {
-        MongoDBContainer(DockerImageName.parse("mongo:4.0.10")).also {
-            it.withTmpFs(mapOf("/var/lib/mongodb/data" to "rw"))
-            it.withReuse(true)
-            it.start()
+    fun clearAllTable() {
+        val query = Query().apply {
+            addCriteria(Criteria())
+        }
+        val ignoreCollectionNames = listOf("mongockLock", "mongockChangeLog")
+        for (collectionName in mongoTemplate.collectionNames) {
+            if (!ignoreCollectionNames.contains(collectionName)) {
+                mongoTemplate.remove(query, collectionName)
+            }
         }
     }
 
@@ -43,6 +54,16 @@ class BaseTest {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(body)
         }.andReturn().asObject()
+    }
+
+
+    protected final inline fun <reified T>getJson(url: String, body: Any): T {
+        val resultActionsDsl = mockMvc.get(url) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(body)
+        }
+        val result = resultActionsDsl.andReturn()
+        return result.asObject()
     }
 
     companion object {

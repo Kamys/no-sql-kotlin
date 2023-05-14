@@ -59,7 +59,7 @@ fun initData(context: ConfigurableApplicationContext) {
     projectsRepository.insert(project)
 }
 
-class ResponseRequest(
+class JobResponseCreateRequest(
     val userId: ObjectId
 )
 

@@ -1,18 +1,15 @@
 package com.example.nosqlkotlin
 
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
 
 class ProjectControllerTest(
-    @Autowired
-    private val mongoTemplate: MongoTemplate,
     @Autowired
     private val projectRepository: ProjectRepository,
 ) : BaseTest() {
@@ -23,7 +20,7 @@ class ProjectControllerTest(
         val projectId = ObjectId.get()
         val jobId = ObjectId.get()
         val user = User(id = ObjectId.get(), name = "Test user")
-        val responseRequest = ResponseRequest(userId = user.id)
+        val request = JobResponseCreateRequest(userId = user.id)
         val project = Project(
             id = projectId,
             name = "Test project",
@@ -35,8 +32,8 @@ class ProjectControllerTest(
 
         // Act
         val view: Project = postJson(
-            url = "/project/$projectId/job/$jobId/responses",
-            body = responseRequest
+            url = "/projects/$projectId/job/$jobId/responses",
+            body = request
         )
 
         // Assert
@@ -51,6 +48,42 @@ class ProjectControllerTest(
             it.status.shouldBe(ResponseStatus.REQUEST)
         }
     }
+
+    @Test
+    fun `should get projects`() {
+        // Arrange
+        val request = ProjectFilter().apply {
+            this.limit = 3
+            this.page = 0
+            this.searchTerm = "data"
+        }
+
+        val projectForFirstPage = listOf(
+            Project( name = "Project_data" ),
+            Project( name = "Project Data" ),
+            Project( name = "SDataProject" ),
+        )
+
+        val otherProject = listOf(
+            Project( name = "Other project 1" ),
+            Project( name = "Other project 2" ),
+        )
+
+        (projectForFirstPage + otherProject).forEach {
+            mongoTemplate.save(it)
+        }
+
+        // Act
+        val view: ProjectResponse = getJson(
+            url = "/projects",
+            body = request
+        )
+
+        // Assert
+        view.totalPages.shouldBe(1)
+        view.currentPage.shouldBe(0)
+        view.totalSize.shouldBe(3)
+        view.projects.shouldHaveSize(3)
+        view.projects.map { it.id }.shouldContainExactly(projectForFirstPage.map { it.id })
+    }
 }
-
-

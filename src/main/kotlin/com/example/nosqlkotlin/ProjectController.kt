@@ -40,7 +40,7 @@ class ProjectController(
     fun sendResponse(
         @PathVariable projectId: ObjectId,
         @PathVariable jobId: ObjectId,
-        @RequestBody responseRequest: ResponseRequest
+        @RequestBody responseRequest: JobResponseCreateRequest
     ): Project {
         val project = projectRepository.findById(projectId)
 
