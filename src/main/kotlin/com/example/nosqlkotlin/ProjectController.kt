@@ -54,12 +54,27 @@ class ProjectController(
     }
 
     @DeleteMapping("/{projectId}")
-    fun deleteProjects(
+    fun deleteProject(
         @PathVariable projectId: ObjectId,
     ) {
         val project = projectRepository.findById(projectId)
             ?: throw NotFoundException("Not found project $projectId")
         projectRepository.delete(project)
+    }
+
+    @DeleteMapping("/{projectId}/jobs/{jobId}")
+    fun deleteProjectJob(
+        @PathVariable projectId: ObjectId,
+        @PathVariable jobId: ObjectId,
+    ) {
+        val project = projectRepository.findById(projectId)
+            ?: throw NotFoundException("Not found project $projectId")
+        val jobIndex = project.jobs.indexOfFirst { it.id != jobId }
+        if (jobIndex == -1) {
+            throw NotFoundException("Not found job $jobId")
+        }
+        project.jobs = project.jobs.drop(jobIndex)
+        projectRepository.save(project)
     }
 
     @GetMapping

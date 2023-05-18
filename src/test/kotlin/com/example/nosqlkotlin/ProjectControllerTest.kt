@@ -8,7 +8,6 @@ import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.core.MongoTemplate
 
 class ProjectControllerTest(
     @Autowired
@@ -91,10 +90,7 @@ class ProjectControllerTest(
         val projectForUpdate = Project(
             id = projectId,
             name = "Project name",
-            jobs = listOf(
-                Job(name = "First job name"),
-                Job(name = "Second job name")
-            )
+            jobs = emptyList()
         )
         projectRepository.save(projectForUpdate)
 
@@ -103,6 +99,31 @@ class ProjectControllerTest(
 
         // Assert
        projectRepository.findById(projectId).shouldBeNull()
+    }
+
+
+    @Test
+    fun `should delete job`() {
+        // Arrange
+        val projectId = ObjectId.get()
+        val jobIdFirstForDelete = ObjectId.get()
+        val jobIdSecond = ObjectId.get()
+        val projectForUpdate = Project(
+            id = projectId,
+            name = "Project name",
+            jobs = listOf(
+                Job(id = jobIdFirstForDelete, name = "Job forst for delete"),
+                Job(id = jobIdSecond, name = "Job second"),
+            )
+        )
+        projectRepository.save(projectForUpdate)
+
+        // Act
+        deleteJson("/projects/${projectId}/jobs/${jobIdFirstForDelete}")
+
+        // Assert
+        val project = projectRepository.findById(projectId).shouldNotBeNull()
+        project.jobs.ensureFirst().id.shouldBe(jobIdSecond)
     }
 
     @Test

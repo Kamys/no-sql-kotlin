@@ -19,7 +19,7 @@ class Project(
     @Id
     val id: ObjectId = ObjectId.get(),
     var name: String,
-    val jobs: List<Job> = emptyList()
+    var jobs: List<Job> = emptyList()
 )
 
 class Job(
