@@ -62,12 +62,14 @@ class BaseTest {
 
 
     protected final inline fun <reified T>getJson(url: String, body: Any): T {
-        val resultActionsDsl = mockMvc.get(url) {
+        return mockMvc.get(url) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(body)
-        }
-        val result = resultActionsDsl.andReturn()
-        return result.asObject()
+        }.andReturn().asObject()
+    }
+
+    protected final fun deleteJson(url: String) {
+        mockMvc.delete(url)
     }
 
     companion object {

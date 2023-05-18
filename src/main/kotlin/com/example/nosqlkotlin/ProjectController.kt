@@ -53,6 +53,15 @@ class ProjectController(
         return project
     }
 
+    @DeleteMapping("/{projectId}")
+    fun deleteProjects(
+        @PathVariable projectId: ObjectId,
+    ) {
+        val project = projectRepository.findById(projectId)
+            ?: throw NotFoundException("Not found project $projectId")
+        projectRepository.delete(project)
+    }
+
     @GetMapping
     fun getProjects(
         @RequestBody filter: ProjectFilter

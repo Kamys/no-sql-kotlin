@@ -2,6 +2,7 @@ package com.example.nosqlkotlin
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
@@ -81,6 +82,27 @@ class ProjectControllerTest(
         view.name.shouldBe(request.name)
         view.jobs.shouldHaveSize(2)
         view.jobs.map { it.name }.shouldContainExactly(request.jobs[0].name, request.jobs[1].name)
+    }
+
+    @Test
+    fun `should delete project`() {
+        // Arrange
+        val projectId = ObjectId.get()
+        val projectForUpdate = Project(
+            id = projectId,
+            name = "Project name",
+            jobs = listOf(
+                Job(name = "First job name"),
+                Job(name = "Second job name")
+            )
+        )
+        projectRepository.save(projectForUpdate)
+
+        // Act
+        deleteJson("/projects/${projectId}")
+
+        // Assert
+       projectRepository.findById(projectId).shouldBeNull()
     }
 
     @Test
