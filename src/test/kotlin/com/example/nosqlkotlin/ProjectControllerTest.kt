@@ -15,6 +15,75 @@ class ProjectControllerTest(
 ) : BaseTest() {
 
     @Test
+    fun `should create project`() {
+        // Arrange
+        val request = ProjectCreateRequest(
+            name = "New project name",
+            jobs = listOf(
+                ProjectCreateRequest.Job(name = "Job 1"),
+                ProjectCreateRequest.Job(name = "Job 2"),
+            )
+        )
+
+        // Act
+        val view: Project = postJson(
+            url = "/projects",
+            body = request
+        )
+
+        // Assert
+        val newProject = projectRepository.findById(view.id).shouldNotBeNull()
+        newProject.name.shouldBe(request.name)
+        newProject.jobs.shouldHaveSize(2)
+        newProject.jobs.map { it.name }.shouldContainExactly("Job 1", "Job 2")
+
+        view.name.shouldBe(request.name)
+        view.jobs.shouldHaveSize(2)
+        view.jobs.map { it.name }.shouldContainExactly("Job 1", "Job 2")
+    }
+
+    @Test
+    fun `should update project`() {
+        // Arrange
+        val projectId = ObjectId.get()
+        val jobIdFirst = ObjectId.get()
+        val jobIdSecond = ObjectId.get()
+        val projectForUpdate = Project(
+            id = projectId,
+            name = "Project old name",
+            jobs = listOf(
+                Job(id = jobIdFirst, name = "First job old name"),
+                Job(id = jobIdSecond, name = "Second job old name")
+            )
+        )
+        projectRepository.save(projectForUpdate)
+
+        val request = ProjectUpdateRequest(
+            name = "New project name",
+            jobs = listOf(
+                ProjectUpdateRequest.Job(id = jobIdFirst, name = "New job name 1"),
+                ProjectUpdateRequest.Job(id = jobIdSecond, name = "New job name 2"),
+            )
+        )
+
+        // Act
+        val view: Project = putJson(
+            url = "/projects/${projectId}",
+            body = request
+        )
+
+        // Assert
+        val newProject = projectRepository.findById(projectId).shouldNotBeNull()
+        newProject.name.shouldBe(request.name)
+        newProject.jobs.shouldHaveSize(2)
+        newProject.jobs.map { it.name }.shouldContainExactly(request.jobs[0].name, request.jobs[1].name)
+
+        view.name.shouldBe(request.name)
+        view.jobs.shouldHaveSize(2)
+        view.jobs.map { it.name }.shouldContainExactly(request.jobs[0].name, request.jobs[1].name)
+    }
+
+    @Test
     fun `should add response in job and return updated project`() {
         // Arrange
         val projectId = ObjectId.get()

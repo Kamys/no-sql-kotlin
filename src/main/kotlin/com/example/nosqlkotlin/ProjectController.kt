@@ -13,6 +13,46 @@ class ProjectController(
     val projectRepository: ProjectRepository,
     val userRepository: UserRepository
 ) {
+
+    @PostMapping
+    fun createProjects(
+        @RequestBody request: ProjectCreateRequest
+    ): Project {
+        val project = Project(
+            name = request.name,
+            jobs = request.jobs.map { Job(name = it.name) }
+        )
+        projectRepository.save(project)
+
+        return project
+    }
+
+    @PutMapping("/{projectId}")
+    fun updateProjects(
+        @PathVariable projectId: ObjectId,
+        @RequestBody request: ProjectUpdateRequest,
+    ): Project {
+        val project = projectRepository.findById(projectId)
+            ?: throw NotFoundException("Not found project $projectId")
+
+        project.apply {
+            this.name = request.name
+        }
+
+        project.jobs.forEach { job ->
+            val newJob = request.jobs.find { it.id == job.id }
+            if (newJob != null) {
+                job.apply {
+                    name = newJob.name
+                }
+            }
+        }
+
+        projectRepository.save(project)
+
+        return project
+    }
+
     @GetMapping
     fun getProjects(
         @RequestBody filter: ProjectFilter
@@ -43,22 +83,13 @@ class ProjectController(
         @RequestBody responseRequest: JobResponseCreateRequest
     ): Project {
         val project = projectRepository.findById(projectId)
-
-        if (project == null) {
-            throw NotFoundException("Not found project $projectId")
-        }
+            ?: throw NotFoundException("Not found project $projectId")
 
         val job = project.jobs.find { it.id == jobId }
-
-        if (job == null) {
-            throw NotFoundException("Not found job $jobId")
-        }
+            ?: throw NotFoundException("Not found job $jobId")
 
         val user = userRepository.findById(responseRequest.userId)
-
-        if (user == null) {
-            throw NotFoundException("Not found user ${responseRequest.userId}")
-        }
+            ?: throw NotFoundException("Not found user ${responseRequest.userId}")
 
         job.addResponse(Response(user = user, status = ResponseStatus.REQUEST))
 

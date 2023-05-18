@@ -15,10 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -51,6 +48,13 @@ class BaseTest {
 
     protected final inline fun <reified T>postJson(url: String, body: Any): T {
         return mockMvc.post(url) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(body)
+        }.andReturn().asObject()
+    }
+
+    protected final inline fun <reified T>putJson(url: String, body: Any): T {
+        return mockMvc.put(url) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(body)
         }.andReturn().asObject()

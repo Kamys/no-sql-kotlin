@@ -18,13 +18,13 @@ interface ProjectRepository : MongoRepository<Project, String> {
 class Project(
     @Id
     val id: ObjectId = ObjectId.get(),
-    val name: String,
+    var name: String,
     val jobs: List<Job> = emptyList()
 )
 
 class Job(
     val id: ObjectId = ObjectId.get(),
-    val name: String,
+    var name: String,
     var responses: MutableList<Response> = mutableListOf(),
 ) {
     fun addResponse(response: Response) {
