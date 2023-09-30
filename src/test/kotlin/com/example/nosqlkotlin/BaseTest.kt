@@ -1,7 +1,5 @@
 package com.example.nosqlkotlin
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -25,13 +22,10 @@ import org.testcontainers.utility.DockerImageName
 @ComponentScan("com.example.nosqlkotlin")
 class BaseTest {
     @Autowired
-    lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
-
-    @Autowired
     lateinit var mongoTemplate: MongoTemplate
+
+    @Autowired
+    lateinit var jsonClient: JsonClient
 
     @BeforeEach
     fun clearAllTable() {
@@ -44,32 +38,6 @@ class BaseTest {
                 mongoTemplate.remove(query, collectionName)
             }
         }
-    }
-
-    protected final inline fun <reified T>postJson(url: String, body: Any): T {
-        return mockMvc.post(url) {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(body)
-        }.andReturn().asObject()
-    }
-
-    protected final inline fun <reified T>putJson(url: String, body: Any): T {
-        return mockMvc.put(url) {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(body)
-        }.andReturn().asObject()
-    }
-
-
-    protected final inline fun <reified T>getJson(url: String, body: Any): T {
-        return mockMvc.get(url) {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(body)
-        }.andReturn().asObject()
-    }
-
-    protected final fun deleteJson(url: String) {
-        mockMvc.delete(url)
     }
 
     companion object {
@@ -86,13 +54,5 @@ class BaseTest {
             registry.add("spring.data.mongodb.port") { mongoDBContainer.firstMappedPort }
             registry.add("spring.data.mongodb.authentication-database") { "admin" }
         }
-    }
-
-    final inline fun <reified T> MvcResult.asObject(): T {
-        return this.response.contentAsString.asObject()
-    }
-
-    final inline fun <reified T> String.asObject(): T {
-        return objectMapper.readValue(this)
     }
 }

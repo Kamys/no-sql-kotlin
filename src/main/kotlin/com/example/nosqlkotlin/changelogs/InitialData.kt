@@ -5,16 +5,11 @@ import io.mongock.api.annotations.*
 import org.springframework.data.mongodb.core.MongoTemplate
 
 @ChangeUnit(id = "ProjectMigration", order = "1", systemVersion = "1")
-class MyMigrationChangeUnit(
+class InitialData(
     private val mongoTemplate: MongoTemplate
 ) {
-
     @BeforeExecution
     fun before() {}
-
-
-    @RollbackBeforeExecution
-    fun rollbackBefore() {}
 
     @Execution
     fun migrationMethod() {
@@ -29,6 +24,9 @@ class MyMigrationChangeUnit(
         mongoTemplate.save(project)
         mongoTemplate.save(user)
     }
+
+    @RollbackBeforeExecution
+    fun rollbackBefore() {}
 
     @RollbackExecution
     fun rollback() {}

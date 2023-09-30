@@ -25,9 +25,7 @@ class MongoDataInitializer(
 class Application
 
 fun main(args: Array<String>) {
-    val context = runApplication<Application>(*args)
-    //initData(context) SpringDataMongoV3Driver
-
+    runApplication<Application>(*args)
 }
 
 fun initData(context: ConfigurableApplicationContext) {

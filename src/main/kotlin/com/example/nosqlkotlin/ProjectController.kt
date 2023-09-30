@@ -42,9 +42,7 @@ class ProjectController(
         project.jobs.forEach { job ->
             val newJob = request.jobs.find { it.id == job.id }
             if (newJob != null) {
-                job.apply {
-                    name = newJob.name
-                }
+                job.name = newJob.name
             }
         }
 

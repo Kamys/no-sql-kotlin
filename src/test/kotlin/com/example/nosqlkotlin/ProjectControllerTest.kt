@@ -26,7 +26,7 @@ class ProjectControllerTest(
         )
 
         // Act
-        val view: Project = postJson(
+        val view: Project = jsonClient.post(
             url = "/projects",
             body = request
         )
@@ -67,7 +67,7 @@ class ProjectControllerTest(
         )
 
         // Act
-        val view: Project = putJson(
+        val view: Project = jsonClient.put(
             url = "/projects/${projectId}",
             body = request
         )
@@ -95,7 +95,7 @@ class ProjectControllerTest(
         projectRepository.save(projectForUpdate)
 
         // Act
-        deleteJson("/projects/${projectId}")
+        jsonClient.delete("/projects/${projectId}")
 
         // Assert
        projectRepository.findById(projectId).shouldBeNull()
@@ -119,7 +119,7 @@ class ProjectControllerTest(
         projectRepository.save(projectForUpdate)
 
         // Act
-        deleteJson("/projects/${projectId}/jobs/${jobIdFirstForDelete}")
+        jsonClient.delete("/projects/${projectId}/jobs/${jobIdFirstForDelete}")
 
         // Assert
         val project = projectRepository.findById(projectId).shouldNotBeNull()
@@ -143,7 +143,7 @@ class ProjectControllerTest(
         mongoTemplate.save(user)
 
         // Act
-        val view: Project = postJson(
+        val view: Project = jsonClient.post(
             url = "/projects/$projectId/job/$jobId/responses",
             body = request
         )
@@ -186,7 +186,7 @@ class ProjectControllerTest(
         }
 
         // Act
-        val view: ProjectResponse = getJson(
+        val view: ProjectResponse = jsonClient.get(
             url = "/projects",
             body = request
         )
