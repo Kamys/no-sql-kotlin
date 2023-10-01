@@ -22,10 +22,12 @@ final class JsonClient {
         }.andReturn().asObject()
     }
 
-    inline fun <reified T>get(url: String, body: Any): T {
+    inline fun <reified T>get(url: String, queryParameters: Any? = null): T {
         return mockMvc.get(url) {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(body)
+            queryParameters?.let {
+                content = objectMapper.writeValueAsString(it)
+            }
         }.andReturn().asObject()
     }
 

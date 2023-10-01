@@ -1,6 +1,10 @@
 package com.example.nosqlkotlin.changelogs
 
-import com.example.nosqlkotlin.*
+import com.example.nosqlkotlin.project.Job
+import com.example.nosqlkotlin.project.Project
+import com.example.nosqlkotlin.project.Response
+import com.example.nosqlkotlin.project.ResponseStatus
+import com.example.nosqlkotlin.user.User
 import io.mongock.api.annotations.*
 import org.springframework.data.mongodb.core.MongoTemplate
 

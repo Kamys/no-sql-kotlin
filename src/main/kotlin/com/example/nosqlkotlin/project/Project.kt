@@ -1,4 +1,5 @@
-package com.example.nosqlkotlin
+package com.example.nosqlkotlin.project
+import com.example.nosqlkotlin.user.User
 import com.example.nosqlkotlin.common.exception.ConflictException
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id

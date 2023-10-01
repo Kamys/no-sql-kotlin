@@ -1,5 +1,8 @@
 package com.example.nosqlkotlin
 
+import com.example.nosqlkotlin.project.*
+import com.example.nosqlkotlin.user.User
+import com.example.nosqlkotlin.user.UserRepository
 import io.mongock.runner.springboot.EnableMongock
 import jakarta.annotation.PostConstruct
 import org.bson.types.ObjectId

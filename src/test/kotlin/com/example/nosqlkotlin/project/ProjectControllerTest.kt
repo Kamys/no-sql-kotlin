@@ -1,5 +1,9 @@
-package com.example.nosqlkotlin
+package com.example.nosqlkotlin.project
 
+import com.example.nosqlkotlin.BaseTest
+import com.example.nosqlkotlin.JobResponseCreateRequest
+import com.example.nosqlkotlin.ensureFirst
+import com.example.nosqlkotlin.user.User
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
@@ -164,7 +168,7 @@ class ProjectControllerTest(
     @Test
     fun `should get projects`() {
         // Arrange
-        val request = ProjectFilter().apply {
+        val queryParameters = ProjectFilter().apply {
             this.limit = 3
             this.page = 0
             this.searchTerm = "data"
@@ -188,7 +192,7 @@ class ProjectControllerTest(
         // Act
         val view: ProjectResponse = jsonClient.get(
             url = "/projects",
-            body = request
+            queryParameters = queryParameters
         )
 
         // Assert

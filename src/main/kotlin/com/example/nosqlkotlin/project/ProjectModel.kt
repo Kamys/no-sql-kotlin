@@ -1,4 +1,4 @@
-package com.example.nosqlkotlin
+package com.example.nosqlkotlin.project
 
 import org.bson.types.ObjectId
 

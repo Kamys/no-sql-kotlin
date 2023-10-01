@@ -1,4 +1,4 @@
-package com.example.nosqlkotlin
+package com.example.nosqlkotlin.user
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
