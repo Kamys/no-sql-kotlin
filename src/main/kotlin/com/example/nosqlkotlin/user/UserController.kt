@@ -18,6 +18,11 @@ import org.bson.Document
 class UserController(
     val mongoTemplate: MongoTemplate
 ) {
+    @GetMapping
+    fun getUser(): String {
+        return "User"
+    }
+
     @GetMapping("/{id}/jobs/interview")
     fun getInterviewJobs(
         @PathVariable id: String
@@ -35,6 +40,7 @@ class UserController(
         val result = mongoTemplate.aggregate(aggregation, "project", Project::class.java)
         val a = result.mappedResults
 
+        // TODO: not work!
         return (a as List<Project>).flatMap { it.jobs }
     }
 }

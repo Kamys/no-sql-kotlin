@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 import org.springframework.data.mongodb.repository.MongoRepository
+import java.io.Serializable
 
 interface ProjectRepository : MongoRepository<Project, String> {
     fun findById(id: ObjectId): Project?
@@ -21,13 +22,13 @@ class Project(
     val id: ObjectId = ObjectId.get(),
     var name: String,
     var jobs: List<Job> = emptyList()
-)
+): Serializable
 
 class Job(
     val id: ObjectId = ObjectId.get(),
     var name: String,
     var responses: MutableList<Response> = mutableListOf(),
-) {
+): Serializable {
     fun addResponse(response: Response) {
         if (responses.any { it.user.id == response.user.id }) {
             throw ConflictException("User has already submitted a response for this job")
@@ -40,7 +41,7 @@ class Response(
     @DocumentReference
     val user: User,
     val status: ResponseStatus
-)
+): Serializable
 
 enum class ResponseStatus {
     REQUEST,

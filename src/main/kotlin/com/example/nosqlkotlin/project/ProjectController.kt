@@ -4,6 +4,7 @@ import com.example.nosqlkotlin.JobResponseCreateRequest
 import com.example.nosqlkotlin.user.UserRepository
 import com.example.nosqlkotlin.common.exception.NotFoundException
 import org.bson.types.ObjectId
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -78,9 +79,12 @@ class ProjectController(
     }
 
     @GetMapping
+    @Cacheable("projects", key = "{#filter.limit, #filter.page, #filter.searchTerm}")
     fun getProjects(
-        @RequestBody filter: ProjectFilter
+        @ModelAttribute filter: ProjectFilter
     ): ProjectResponse {
+        println("Get project from DB...")
+        Thread.sleep(4_000)
         val paging = PageRequest.of(filter.page, filter.limit)
         val page = projectRepository.smartSearch(filter.searchTerm, paging)
 

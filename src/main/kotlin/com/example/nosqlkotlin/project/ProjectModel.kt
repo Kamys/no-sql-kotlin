@@ -1,13 +1,14 @@
 package com.example.nosqlkotlin.project
 
 import org.bson.types.ObjectId
+import java.io.Serializable
 
 class ProjectResponse(
     val projects: List<Project>,
     val currentPage: Int,
     val totalPages: Int,
     val totalSize: Long
-)
+): Serializable
 
 class ProjectCreateRequest(
     val name: String,

@@ -22,14 +22,24 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation("io.mongock:mongock-springboot-v3")
-    implementation("io.mongock:mongodb-springdata-v4-driver")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-
+    // Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+
+    // Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // Data base
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("io.mongock:mongock-springboot-v3") // TODO: May be it can be delete
+    implementation("io.mongock:mongodb-springdata-v4-driver")
+
+    // Other
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+
+    // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
