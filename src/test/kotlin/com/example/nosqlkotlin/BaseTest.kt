@@ -5,10 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.cache.CacheManager
+import org.springframework.cache.support.NoOpCacheManager
+import org.springframework.context.annotation.*
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -16,8 +20,19 @@ import org.springframework.test.web.servlet.*
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
+@TestConfiguration
+@Profile("test")
+class CacheTestConfig {
+    @Primary
+    @Bean
+    fun cacheManager(): CacheManager {
+        return NoOpCacheManager()
+    }
+}
+
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @ComponentScan("com.example.nosqlkotlin")
 class BaseTest {

@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.util.MultiValueMap
 
 class ProjectControllerTest(
     @Autowired
@@ -102,7 +103,7 @@ class ProjectControllerTest(
         jsonClient.delete("/projects/${projectId}")
 
         // Assert
-       projectRepository.findById(projectId).shouldBeNull()
+        projectRepository.findById(projectId).shouldBeNull()
     }
 
 
@@ -168,31 +169,25 @@ class ProjectControllerTest(
     @Test
     fun `should get projects`() {
         // Arrange
-        val queryParameters = ProjectFilter().apply {
-            this.limit = 3
-            this.page = 0
-            this.searchTerm = "data"
-        }
-
         val projectForFirstPage = listOf(
-            Project( name = "Project_data" ),
-            Project( name = "Project Data" ),
-            Project( name = "SDataProject" ),
+            Project(name = "Project_data"),
+            Project(name = "Project Data"),
+            Project(name = "SDataProject"),
         )
 
         val otherProject = listOf(
-            Project( name = "Other project 1" ),
-            Project( name = "Other project 2" ),
+            Project(name = "Other project 1"),
+            Project(name = "Other project 2"),
         )
 
-        (projectForFirstPage + otherProject).forEach {
-            mongoTemplate.save(it)
-        }
+        mongoTemplate.insertAll(otherProject + projectForFirstPage)
 
         // Act
         val view: ProjectResponse = jsonClient.get(
             url = "/projects",
-            queryParameters = queryParameters
+            "limit" to "3",
+            "page" to "0",
+            "searchTerm" to "data"
         )
 
         // Assert

@@ -2,10 +2,12 @@ package com.example.nosqlkotlin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.slf4j.event.KeyValuePair
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.*
+import org.springframework.util.MultiValueMap
 
 @Component
 final class JsonClient {
@@ -22,11 +24,11 @@ final class JsonClient {
         }.andReturn().asObject()
     }
 
-    inline fun <reified T>get(url: String, queryParameters: Any? = null): T {
+    inline fun <reified T>get(url: String, vararg queryParameters: Pair<String, String>): T {
         return mockMvc.get(url) {
             contentType = MediaType.APPLICATION_JSON
-            queryParameters?.let {
-                content = objectMapper.writeValueAsString(it)
+            queryParameters.forEach {
+                param(it.first, it.second)
             }
         }.andReturn().asObject()
     }

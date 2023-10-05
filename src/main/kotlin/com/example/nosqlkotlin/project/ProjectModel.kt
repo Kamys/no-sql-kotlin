@@ -24,7 +24,7 @@ class ProjectUpdateRequest(
     val jobs: List<Job>
 ) {
     class Job(
-        val id: ObjectId,
+        val id: ObjectId?,
         val name: String,
     )
 }
