@@ -15,6 +15,12 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("io.mongock:mongock-bom:5.2.2")
+    }
+}
+
 dependencies {
     // Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
@@ -25,6 +31,8 @@ dependencies {
 
     // Data base
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("io.mongock:mongock-springboot")
+    implementation("io.mongock:mongodb-springdata-v4-driver")
 
     // Other
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
