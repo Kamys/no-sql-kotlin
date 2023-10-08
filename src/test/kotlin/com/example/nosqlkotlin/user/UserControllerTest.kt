@@ -58,11 +58,11 @@ class UserControllerTest : BaseTest() {
         )
 
         mongoTemplate.save(projectFirst)
-        mongoTemplate.save(projectSecond)
+        val project = mongoTemplate.save(projectSecond)
 
         // Act
         val result: List<Job> = jsonClient.get(
-            url = "/users/$userId/jobs/interview",
+            url = "/users/${project.id}",
         )
 
         // Assert

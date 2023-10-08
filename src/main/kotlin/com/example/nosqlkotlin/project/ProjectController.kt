@@ -1,6 +1,5 @@
 package com.example.nosqlkotlin.project
 
-import com.example.nosqlkotlin.JobResponseCreateRequest
 import com.example.nosqlkotlin.user.UserRepository
 import com.example.nosqlkotlin.common.exception.NotFoundException
 import org.bson.types.ObjectId

@@ -1,37 +1,76 @@
 package com.example.nosqlkotlin.changelogs
 
-import com.example.nosqlkotlin.project.Job
-import com.example.nosqlkotlin.project.Project
-import com.example.nosqlkotlin.project.Response
-import com.example.nosqlkotlin.project.ResponseStatus
+import com.example.nosqlkotlin.project.*
 import com.example.nosqlkotlin.user.User
-import io.mongock.api.annotations.*
-import org.springframework.data.mongodb.core.MongoTemplate
+import com.example.nosqlkotlin.user.UserRepository
 
-@ChangeUnit(id = "ProjectMigration", order = "1", systemVersion = "1")
 class InitialData(
-    private val mongoTemplate: MongoTemplate
+    private val userRepository: UserRepository,
+    private val projectsRepository: ProjectRepository,
 ) {
-    @BeforeExecution
-    fun before() {}
-
-    @Execution
     fun migrationMethod() {
-        val user = User(name = "Alex", email = "alex@mail.com")
-        val job = Job(name = "Кузнец")
-        job.addResponse(Response(user = user, status = ResponseStatus.REQUEST))
-        val project = Project(
-            name = "Project 1", jobs = listOf(
-                job
+        val alex = User(name = "Alex", email = "alex@mail.com")
+        val bella = User(name = "Bella", email = "bella@mail.com")
+        val charlie = User(name = "Charlie", email = "charlie@mail.com")
+
+        userRepository.save(alex)
+        userRepository.save(bella)
+        userRepository.save(charlie)
+
+        val alphaProject = Project(
+            name = "AlphaProject",
+            jobs = listOf(
+                Job(
+                    name = "Developer",
+                    responses = mutableListOf(
+                        Response(user = alex, status = ResponseStatus.REQUEST),
+                        Response(user = charlie, status = ResponseStatus.REQUEST)
+                    )
+                ),
+                Job(
+                    name = "Tester",
+                    responses = mutableListOf(
+                        Response(user = alex, status = ResponseStatus.REQUEST),
+                        Response(user = charlie, status = ResponseStatus.INTERVIEW)
+                    )
+                )
             )
         )
-        mongoTemplate.save(project)
-        mongoTemplate.save(user)
+        projectsRepository.insert(alphaProject)
+
+        val betaProject = Project(
+            name = "BetaProject",
+            jobs = listOf(
+                Job(
+                    name = "Designer",
+                    responses = mutableListOf(
+                        Response(user = bella, status = ResponseStatus.INTERVIEW),
+                        Response(user = alex, status = ResponseStatus.INTERVIEW)
+                    )
+                )
+            )
+        )
+        projectsRepository.insert(betaProject)
+
+        val gammaProject = Project(
+            name = "GammaProject",
+            jobs = listOf(
+                Job(
+                    name = "Manager",
+                    responses = mutableListOf(
+                        Response(user = alex, status = ResponseStatus.REQUEST),
+                        Response(user = charlie, status = ResponseStatus.REQUEST),
+                        Response(user = bella, status = ResponseStatus.REQUEST),
+                    )
+                ),
+                Job(
+                    name = "Accountant",
+                    responses = mutableListOf(
+                        Response(user = bella, status = ResponseStatus.RESPONSE_ACCEPTED)
+                    )
+                )
+            )
+        )
+        projectsRepository.insert(gammaProject)
     }
-
-    @RollbackBeforeExecution
-    fun rollbackBefore() {}
-
-    @RollbackExecution
-    fun rollback() {}
 }

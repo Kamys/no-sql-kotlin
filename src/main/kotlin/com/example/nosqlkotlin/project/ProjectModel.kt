@@ -34,3 +34,7 @@ class ProjectFilter {
     var page: Int = 0
     var searchTerm: String? = null
 }
+
+class JobResponseCreateRequest(
+    val userId: ObjectId
+)
