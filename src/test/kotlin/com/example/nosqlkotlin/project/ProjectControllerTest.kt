@@ -1,7 +1,6 @@
 package com.example.nosqlkotlin.project
 
 import com.example.nosqlkotlin.BaseTest
-import com.example.nosqlkotlin.JobResponseCreateRequest
 import com.example.nosqlkotlin.ensureFirst
 import com.example.nosqlkotlin.user.User
 import io.kotest.matchers.collections.shouldContainExactly
@@ -12,7 +11,6 @@ import io.kotest.matchers.shouldBe
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.util.MultiValueMap
 
 class ProjectControllerTest(
     @Autowired
@@ -117,7 +115,7 @@ class ProjectControllerTest(
             id = projectId,
             name = "Project name",
             jobs = listOf(
-                Job(id = jobIdFirstForDelete, name = "Job forst for delete"),
+                Job(id = jobIdFirstForDelete, name = "Job first for delete"),
                 Job(id = jobIdSecond, name = "Job second"),
             )
         )
