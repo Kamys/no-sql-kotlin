@@ -10,13 +10,10 @@ import org.springframework.test.web.servlet.*
 import org.springframework.util.MultiValueMap
 
 @Component
-final class JsonClient {
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
-
+final class JsonClient(
+    val mockMvc: MockMvc,
+    var objectMapper: ObjectMapper
+) {
     inline fun <reified T>post(url: String, body: Any): T {
         return mockMvc.post(url) {
             contentType = MediaType.APPLICATION_JSON

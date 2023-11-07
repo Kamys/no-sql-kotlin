@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.*
 import org.testcontainers.containers.MongoDBContainer
@@ -30,11 +31,10 @@ class CacheTestConfig {
     }
 }
 
-@ExtendWith(SpringExtension::class)
 @SpringBootTest
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@ComponentScan("com.example.nosqlkotlin")
 class BaseTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate

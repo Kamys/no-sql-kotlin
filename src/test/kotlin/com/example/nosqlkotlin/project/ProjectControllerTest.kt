@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class ProjectControllerTest(
-    @Autowired
     private val projectRepository: ProjectRepository,
 ) : BaseTest() {
 
