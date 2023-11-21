@@ -22,8 +22,7 @@ dependencyManagement {
 }
 
 dependencies {
-    // Websocket
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 
     // Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")

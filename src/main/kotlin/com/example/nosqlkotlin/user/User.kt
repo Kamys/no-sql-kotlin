@@ -16,6 +16,6 @@ class User(
 ): Serializable
 
 interface UserRepository : MongoRepository<User, String> {
-    fun findByName(primaryKey: String): User?
+    fun findByName(primaryKey: String): User
     fun findById(id: ObjectId): User?
 }

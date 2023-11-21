@@ -7,21 +7,17 @@ import io.mongock.api.annotations.ChangeUnit
 import io.mongock.api.annotations.Execution
 import io.mongock.api.annotations.RollbackExecution
 
-@ChangeUnit(id = "ProjectMigration", order = "1", systemVersion = "1")
-class InitialData(
+@ChangeUnit(id = "ProjectMigration", order = "2", systemVersion = "1")
+class V2_ProjectMigration(
     private val userRepository: UserRepository,
     private val projectsRepository: ProjectRepository,
 ) {
 
     @Execution
     fun migrationMethod() {
-        val alex = User(name = "Alex", email = "alex@mail.com")
-        val bella = User(name = "Bella", email = "bella@mail.com")
-        val charlie = User(name = "Charlie", email = "charlie@mail.com")
-
-        userRepository.save(alex)
-        userRepository.save(bella)
-        userRepository.save(charlie)
+        val alex = userRepository.findByName("Alex")
+        val bella = userRepository.findByName("Bella")
+        val charlie = userRepository.findByName("Charlie")
 
         val alphaProject = Project(
             name = "AlphaProject",
